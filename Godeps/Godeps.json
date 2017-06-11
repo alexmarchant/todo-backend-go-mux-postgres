@@ -4,6 +4,11 @@
 	"GodepVersion": "v79",
 	"Deps": [
 		{
+			"ImportPath": "github.com/gorilla/handlers",
+			"Comment": "v1.2.1-1-ga4d79d4",
+			"Rev": "a4d79d4487c2430a17d9dc8a1f74d1a6ed6908ca"
+		},
+		{
 			"ImportPath": "github.com/gorilla/mux",
 			"Comment": "v1.4.0-10-g18fca31",
 			"Rev": "18fca31550181693b3a834a15b74b564b3605876"
