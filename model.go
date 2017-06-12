@@ -1,5 +1,10 @@
 package main
 
+import (
+  "strconv"
+  "net/http"
+)
+
 type task struct {
   ID int `json:"id"`
   Title string `json:"title"`
@@ -33,6 +38,18 @@ func (t *task) updateTask() error {
 func (t *task) deleteTask() error {
   _, err := db.Exec("DELETE FROM tasks WHERE id=$1", t.ID)
   return err
+}
+
+func (t *task) url(r *http.Request) string {
+  var protocol string
+
+  if r.Host == "localhost:3000" {
+    protocol = "http"
+  } else {
+    protocol = "https"
+  }
+    
+  return protocol + "://" + r.Host + "/tasks/" + strconv.Itoa(t.ID)
 }
 
 func getTasks() ([]task, error) {

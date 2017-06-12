@@ -12,10 +12,15 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
   addDefaultHeaders(w)
   tasks, err := getTasks()
   if err != nil {
-      respondWithError(w, http.StatusInternalServerError, err.Error())
-      return
+    respondWithError(w, http.StatusInternalServerError, err.Error())
+    return
   }
-  respondWithJSON(w, http.StatusOK, tasks)
+  responseTasks := []responseTask{}
+  for _, t := range tasks {
+    rt := makeResponseTask(&t, r)
+    responseTasks = append(responseTasks, *rt)
+  }
+  respondWithJSON(w, http.StatusOK, responseTasks)
 }
 
 func DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +48,7 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  respondWithJSON(w, http.StatusOK, t)
+  respondWithJSON(w, http.StatusOK, makeResponseTask(&t, r))
 }
 
 func ReadHandler(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +70,7 @@ func ReadHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  respondWithJSON(w, http.StatusOK, t)
+  respondWithJSON(w, http.StatusOK, makeResponseTask(t, r))
 }
 
 func UpdateHandler(w http.ResponseWriter, r *http.Request) {
@@ -90,7 +95,7 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  respondWithJSON(w, http.StatusOK, t)
+  respondWithJSON(w, http.StatusOK, makeResponseTask(&t, r))
 }
 
 func DeleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -140,5 +145,22 @@ func addDefaultHeaders(w http.ResponseWriter) {
   w.Header().Set("Access-Control-Allow-Origin", "*")
   w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
   w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE")
+}
+
+type responseTask struct {
+  ID int `json:"id"`
+  Title string `json:"title"`
+  Completed bool `json:"completed"`
+  Order int `json:"order"`
+  URL string `json:"url"`
+}
+
+func makeResponseTask(t *task, r *http.Request) *responseTask {
+  return &responseTask{
+    ID: t.ID,
+    Title: t.Title,
+    Completed: t.Completed,
+    Order: t.Order,
+    URL: t.url(r)}
 }
 

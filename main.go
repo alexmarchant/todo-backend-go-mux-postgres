@@ -15,6 +15,5 @@ func main() {
   r := router()
   port := ":" + os.Getenv("PORT")
   log.Printf("Starting server on port %s", port)
-
   log.Fatal(http.ListenAndServe(port, r))
 }
