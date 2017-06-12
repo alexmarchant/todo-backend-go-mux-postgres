@@ -9,6 +9,7 @@ import (
 )
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
+  addDefaultHeaders(w)
   tasks, err := getTasks()
   if err != nil {
       respondWithError(w, http.StatusInternalServerError, err.Error())
@@ -18,6 +19,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
+  addDefaultHeaders(w)
   if err := deleteTasks(); err != nil {
     respondWithError(w, http.StatusInternalServerError, err.Error())
     return
@@ -27,6 +29,7 @@ func DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreateHandler(w http.ResponseWriter, r *http.Request) {
+  addDefaultHeaders(w)
   var t task
   decoder := json.NewDecoder(r.Body)
   if err := decoder.Decode(&t); err != nil {
@@ -44,6 +47,7 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ReadHandler(w http.ResponseWriter, r *http.Request) {
+  addDefaultHeaders(w)
   id, err := getID(w, r)
   if err != nil {
     respondWithError(w, http.StatusBadRequest, "Invalid task ID")
@@ -65,6 +69,7 @@ func ReadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateHandler(w http.ResponseWriter, r *http.Request) {
+  addDefaultHeaders(w)
   id, err := getID(w, r)
   if err != nil {
     respondWithError(w, http.StatusBadRequest, "Invalid task ID")
@@ -89,6 +94,7 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteHandler(w http.ResponseWriter, r *http.Request) {
+  addDefaultHeaders(w)
   id, err := getID(w, r)
   if err != nil {
     respondWithError(w, http.StatusBadRequest, "Invalid task ID")
@@ -122,5 +128,10 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
   w.Header().Set("Content-Type", "application/json")
   w.WriteHeader(code)
   w.Write(response)
+}
+
+func addDefaultHeaders(w http.ResponseWriter) {
+  w.Header().Set("Access-Control-Allow-Origin", "*")
+  w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 }
 

@@ -5,7 +5,7 @@ import (
   "log"
   "os"
   "database/sql"
-  "github.com/gorilla/handlers"
+//  "github.com/gorilla/handlers"
 )
 
 var db *sql.DB
@@ -17,11 +17,12 @@ func main() {
   log.Printf("Starting server on port %s", port)
 
   // CORS
-  originsOk := handlers.AllowedOrigins([]string{"*"})
-  headersOk := handlers.AllowedHeaders([]string{"Origin, X-Requested-With, Content-Type, Accept"})
-  methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PATCH", "OPTIONS", "DELETE"})
-  ignoreOptions := handlers.IgnoreOptions()
+//  originsOk := handlers.AllowedOrigins([]string{"*"})
+//  headersOk := handlers.AllowedHeaders([]string{"Origin, X-Requested-With, Content-Type, Accept"})
+//  methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PATCH", "OPTIONS", "DELETE"})
+//  ignoreOptions := handlers.IgnoreOptions()
 
   // Start server
-  log.Fatal(http.ListenAndServe(port, handlers.CORS(originsOk, headersOk, methodsOk, ignoreOptions)(r)))
+  // log.Fatal(http.ListenAndServe(port, handlers.CORS(originsOk, headersOk, methodsOk)(r)))
+  log.Fatal(http.ListenAndServe(port, r))
 }
