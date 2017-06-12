@@ -6,7 +6,7 @@ import (
 
 func router() *mux.Router {
   r := mux.NewRouter()
-  r.HandleFunc("*", OptionsHandler).Methods("OPTIONS")
+  r.Methods("OPTIONS").HandlerFunc(OptionsHandler)
   r.HandleFunc("/", IndexHandler).Methods("GET")
   r.HandleFunc("/", CreateHandler).Methods("POST")
   r.HandleFunc("/", DeleteAllHandler).Methods("DELETE")
