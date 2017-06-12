@@ -110,6 +110,12 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request) {
   respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
+func OptionsHandler(w http.ResponseWriter, r *http.Request) {
+  addDefaultHeaders(w)
+  w.WriteHeader(http.StatusOK)
+  return
+}
+
 // Helpers
 
 func getID(w http.ResponseWriter, r *http.Request) (id int, err error) {
