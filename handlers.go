@@ -139,5 +139,6 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 func addDefaultHeaders(w http.ResponseWriter) {
   w.Header().Set("Access-Control-Allow-Origin", "*")
   w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE")
 }
 
