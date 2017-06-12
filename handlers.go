@@ -81,21 +81,21 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  var t task
+  t := &task{ID: id}
+  t.getTask()
   decoder := json.NewDecoder(r.Body)
   if err := decoder.Decode(&t); err != nil {
     respondWithError(w, http.StatusBadRequest, "Invalid request payload")
     return
   }
   defer r.Body.Close()
-  t.ID = id
 
   if err := t.updateTask(); err != nil {
     respondWithError(w, http.StatusInternalServerError, err.Error())
     return
   }
 
-  respondWithJSON(w, http.StatusOK, makeResponseTask(&t, r))
+  respondWithJSON(w, http.StatusOK, makeResponseTask(t, r))
 }
 
 func DeleteHandler(w http.ResponseWriter, r *http.Request) {
