@@ -5,15 +5,15 @@ import (
   "log"
   "os"
   "database/sql"
-//  "github.com/gorilla/handlers"
 )
 
 var db *sql.DB
 
 func main() {
-  db = database()
-  r := router()
+  db = connectToDB()
+  r := makeRoutes()
   port := ":" + os.Getenv("PORT")
+
   log.Printf("Starting server on port %s", port)
   log.Fatal(http.ListenAndServe(port, r))
 }

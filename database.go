@@ -7,18 +7,18 @@ import (
   _ "github.com/lib/pq"
 )
 
-func database() *sql.DB {
+func connectToDB() *sql.DB {
   db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
   if err != nil {
     log.Fatal(err)
   }
 
-  ensureTables(db)
+  ensureTasksTablesExists(db)
 
   return db
 }
 
-func ensureTables(db *sql.DB) {
+func ensureTasksTablesExists(db *sql.DB) {
   query := `CREATE TABLE IF NOT EXISTS tasks
 (
 id SERIAL,

@@ -8,8 +8,7 @@ import (
   "encoding/json"
 )
 
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
-  addDefaultHeaders(w)
+func indexHandler(w http.ResponseWriter, r *http.Request) {
   tasks, err := getTasks()
   if err != nil {
     respondWithError(w, http.StatusInternalServerError, err.Error())
@@ -23,8 +22,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
   respondWithJSON(w, http.StatusOK, responseTasks)
 }
 
-func DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
-  addDefaultHeaders(w)
+func deleteAllHandler(w http.ResponseWriter, r *http.Request) {
   if err := deleteTasks(); err != nil {
     respondWithError(w, http.StatusInternalServerError, err.Error())
     return
@@ -33,8 +31,7 @@ func DeleteAllHandler(w http.ResponseWriter, r *http.Request) {
   respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
-func CreateHandler(w http.ResponseWriter, r *http.Request) {
-  addDefaultHeaders(w)
+func createHandler(w http.ResponseWriter, r *http.Request) {
   var t task
   decoder := json.NewDecoder(r.Body)
   if err := decoder.Decode(&t); err != nil {
@@ -51,8 +48,7 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
   respondWithJSON(w, http.StatusOK, makeResponseTask(&t, r))
 }
 
-func ReadHandler(w http.ResponseWriter, r *http.Request) {
-  addDefaultHeaders(w)
+func readHandler(w http.ResponseWriter, r *http.Request) {
   id, err := getID(w, r)
   if err != nil {
     respondWithError(w, http.StatusBadRequest, "Invalid task ID")
@@ -73,8 +69,7 @@ func ReadHandler(w http.ResponseWriter, r *http.Request) {
   respondWithJSON(w, http.StatusOK, makeResponseTask(t, r))
 }
 
-func UpdateHandler(w http.ResponseWriter, r *http.Request) {
-  addDefaultHeaders(w)
+func updateHandler(w http.ResponseWriter, r *http.Request) {
   id, err := getID(w, r)
   if err != nil {
     respondWithError(w, http.StatusBadRequest, "Invalid task ID")
@@ -98,8 +93,7 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
   respondWithJSON(w, http.StatusOK, makeResponseTask(t, r))
 }
 
-func DeleteHandler(w http.ResponseWriter, r *http.Request) {
-  addDefaultHeaders(w)
+func deleteHandler(w http.ResponseWriter, r *http.Request) {
   id, err := getID(w, r)
   if err != nil {
     respondWithError(w, http.StatusBadRequest, "Invalid task ID")
@@ -113,12 +107,6 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request) {
   }
 
   respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
-}
-
-func OptionsHandler(w http.ResponseWriter, r *http.Request) {
-  addDefaultHeaders(w)
-  w.WriteHeader(http.StatusOK)
-  return
 }
 
 // Helpers
@@ -141,10 +129,22 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
   w.Write(response)
 }
 
-func addDefaultHeaders(w http.ResponseWriter) {
-  w.Header().Set("Access-Control-Allow-Origin", "*")
-  w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-  w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE")
+func commonHandlers(next http.HandlerFunc) http.Handler {
+  return cors(next);
+}
+
+func cors(next http.Handler) http.Handler {
+  fn := func(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Access-Control-Allow-Origin", "*")
+    w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE")
+    if r.Method == "OPTIONS" {
+			return // Preflight sets headers and we're done
+		}
+		next.ServeHTTP(w, r)
+  }
+
+  return http.HandlerFunc(fn)
 }
 
 type responseTask struct {

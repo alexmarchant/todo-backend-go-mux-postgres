@@ -4,15 +4,20 @@ import (
   "github.com/gorilla/mux"
 )
 
-func router() *mux.Router {
+func makeRoutes() *mux.Router {
   r := mux.NewRouter()
-  r.Methods("OPTIONS").HandlerFunc(OptionsHandler)
-  r.Path("/").Methods("GET").HandlerFunc(IndexHandler)
-  r.Path("/").Methods("POST").HandlerFunc(CreateHandler)
-  r.Path("/").Methods("DELETE").HandlerFunc(DeleteAllHandler)
-	r.Path("/tasks/{id}").Methods("GET").HandlerFunc(ReadHandler)
-	r.Path("/tasks/{id}").Methods("PATCH").HandlerFunc(UpdateHandler)
-	r.Path("/tasks/{id}").Methods("DELETE").HandlerFunc(DeleteHandler)
+  r.Path("/").Methods("GET").Handler(
+    commonHandlers(indexHandler))
+  r.Path("/").Methods("POST").Handler(
+    commonHandlers(createHandler))
+  r.Path("/").Methods("DELETE").Handler(
+    commonHandlers(deleteAllHandler))
+	r.Path("/tasks/{id}").Methods("GET").Handler(
+    commonHandlers(readHandler))
+	r.Path("/tasks/{id}").Methods("PATCH").Handler(
+    commonHandlers(updateHandler))
+	r.Path("/tasks/{id}").Methods("DELETE").Handler(
+    commonHandlers(deleteHandler))
   return r
 }
 
