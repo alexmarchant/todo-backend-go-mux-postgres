@@ -6,6 +6,7 @@ import (
 
 func makeRoutes() *mux.Router {
   r := mux.NewRouter()
+  r.Methods("OPTIONS").Handler(commonHandlersHeadersOnly())
   r.Path("/").Methods("GET").Handler(
     commonHandlers(indexHandler))
   r.Path("/").Methods("POST").Handler(

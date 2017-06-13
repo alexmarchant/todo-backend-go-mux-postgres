@@ -129,10 +129,6 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
   w.Write(response)
 }
 
-func commonHandlers(next http.HandlerFunc) http.Handler {
-  return cors(next);
-}
-
 func cors(next http.Handler) http.Handler {
   fn := func(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -145,6 +141,15 @@ func cors(next http.Handler) http.Handler {
   }
 
   return http.HandlerFunc(fn)
+}
+
+func commonHandlers(next http.HandlerFunc) http.Handler {
+  return cors(next)
+}
+
+func commonHandlersHeadersOnly() http.Handler {
+  fn := func(w http.ResponseWriter, r *http.Request) {}
+  return cors(http.HandlerFunc(fn))
 }
 
 type responseTask struct {
